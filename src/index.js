@@ -5,7 +5,7 @@ const temp_body_val = [];
 const request_keys = [];
 const template_keys = [];
 const keyError = new Object();
-const bodyError = new Object();
+const bodyError = new Object()
 const msg = new Object();
 
 const validate = function (object, flag) {
@@ -20,9 +20,9 @@ const validate = function (object, flag) {
       return validate(val[1], flag);
     }
     if (flag === "request") {
-      if (!req_body.includes(val[0])) {
-        req_body.push(val[0]);
-      }
+      // if (!req_body.includes(val[0])) {
+      req_body.push(val[0]);
+      // }
       if (typeof val[1] === "object") {
         return validate(val[1], flag);
       } else {
@@ -30,9 +30,9 @@ const validate = function (object, flag) {
       }
     }
     if (flag === "template") {
-      if (!temp_body.includes(val[0])) {
-        temp_body.push(val[0]);
-      }
+      // if (!temp_body.includes(val[0])) {
+      temp_body.push(val[0]);
+      // }
       if (typeof val[1] === "object") {
         return validate(val[1], flag);
       } else {
@@ -42,19 +42,29 @@ const validate = function (object, flag) {
   });
 };
 
-const checker = function (reqObject, tempObject) {
-  validate(reqObject, "request");
+function checker (reqObject, tempObject) {
   validate(tempObject, "template");
+  validate(reqObject, "request");
   console.log("printing request: ", req_body);
   console.log("printign request value: ", req_body_val);
   console.log("printing body: ", temp_body);
   console.log("printing body value: ", temp_body_val);
   console.log("printing request keys: ", request_keys);
   console.log("printing template keys: ", template_keys);
+
   template_keys.filter((val, index) => {
-    if (!request_keys.includes(val)) {
+    // console.log("template keys: ", array[index]);
+    // console.log("request keys: ", request_keys[index]);
+    // console.log('printing template key',array.indexOf(val))
+    // console.log('printing request key', request_keys.indexOf(val))
+    // console.log(request_keys.indexOf(val))
+    // console.log(request_keys[index] === val)
+    // console.log('request keys: ',request_keys);
+    if (
+      !request_keys.includes(val) || request_keys[index] !== template_keys[index]
+    ) {
       bodyError[
-        `${template_keys[index]}`
+        template_keys[index]
       ] = `${template_keys[index]} field is required`;
     }
   });
@@ -79,6 +89,7 @@ const checker = function (reqObject, tempObject) {
     (msg.status = true), (msg.message = "Success");
     return msg;
   }
+  delete keyError.undefined;
   return keyError;
 };
 
@@ -99,11 +110,15 @@ let obj1 = {
         full_name: "United Kingdom",
         short_name: {
           sh_name: "UK",
+          name: 'ritesh'
         },
       },
       state: "England",
     },
   ],
+  demoArr: {
+    state: "UK",
+  },
 };
 
 // temp body
@@ -123,11 +138,15 @@ let obj2 = {
         full_name: "United States Of America",
         short_name: {
           sh_name: "USA",
+          name: "ritesh",
         },
       },
       state: "USA",
     },
   ],
+  demoArr: {
+    state: "USA",
+  },
 };
 
 const result = checker(obj1, obj2);
